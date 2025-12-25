@@ -1,0 +1,13 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "entry": ["app/app.vue", "app/pages/**/*.vue", "nuxt.config.ts"],
+  "project": ["app/**/*.{ts,vue}", "server/**/*.ts"],
+  "ignore": [".nuxt/**", ".output/**", "node_modules/**"],
+  "ignoreDependencies": [
+    "@iconify-json/lucide",
+    "@nuxt/devtools",
+    "@nuxt/test-utils",
+    "happy-dom",
+    "vue-tsc"
+  ]
+}

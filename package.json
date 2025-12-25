@@ -1,0 +1,17 @@
+{
+  "name": "firefly",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"bun run dev:backend\" \"bun run dev:frontend\"",
+    "dev:backend": "cd backend && python main.py",
+    "dev:frontend": "cd frontend && bun run dev",
+    "build": "cd frontend && bun run build",
+    "install:all": "cd frontend && bun install",
+    "lint": "cd frontend && bun run lint",
+    "typecheck": "cd frontend && bun run typecheck",
+    "test": "cd frontend && bun run test"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json",
+  "version": "0.2",
+  "language": "en",
+  "words": [
+    "nuxt",
+    "pinia",
+    "vueuse",
+    "reka",
+    "tailwindcss",
+    "iconify",
+    "lucide",
+    "biomejs",
+    "vitest",
+    "syncpack",
+    "taze",
+    "knip",
+    "prisma",
+    "timestamptz",
+    "firefly"
+  ],
+  "ignorePaths": [
+    "node_modules",
+    ".nuxt",
+    ".output",
+    "dist",
+    "bun.lock",
+    "*.min.js"
+  ]
+}
