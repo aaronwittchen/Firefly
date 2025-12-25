@@ -9,7 +9,7 @@ resources:
 patches:
   - target:
       kind: PersistentVolumeClaim
-      name: firefly-upload-pvc
+      name: postgres-backup-pvc
     patch: |-
       - op: add
         path: /spec/storageClassName
@@ -17,7 +17,7 @@ patches:
 
   - target:
       kind: StatefulSet
-      name: mariadb
+      name: postgres
     patch: |-
       - op: add
         path: /spec/volumeClaimTemplates/0/spec/storageClassName

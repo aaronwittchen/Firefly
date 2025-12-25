@@ -1,10 +1,11 @@
+# Firefly Error Tracker - Backend Deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: firefly
+  name: firefly-backend
   namespace: firefly
   labels:
-    app: firefly
+    app: firefly-backend
 spec:
   replicas: 1
   strategy:
@@ -14,27 +15,27 @@ spec:
       maxUnavailable: 0
   selector:
     matchLabels:
-      app: firefly
+      app: firefly-backend
   template:
     metadata:
       labels:
-        app: firefly
+        app: firefly-backend
     spec:
       serviceAccountName: firefly
       terminationGracePeriodSeconds: 30
       initContainers:
-        - name: wait-for-mariadb
+        - name: wait-for-postgres
           image: busybox:1.36
           command:
             - /bin/sh
             - -c
             - |
-              echo "Waiting for MariaDB..."
-              until nc -z mariadb.firefly.svc.cluster.local 3306; do
-                echo "MariaDB not ready, waiting..."
+              echo "Waiting for PostgreSQL..."
+              until nc -z postgres.firefly.svc.cluster.local 5432; do
+                echo "PostgreSQL not ready, waiting..."
                 sleep 2
               done
-              echo "MariaDB is ready!"
+              echo "PostgreSQL is ready!"
           resources:
             requests:
               cpu: 10m
@@ -43,106 +44,150 @@ spec:
               cpu: 50m
               memory: 32Mi
       containers:
-        - name: firefly
-          image: fireflyiii/core:latest
+        - name: backend
+          image: yourusername/firefly-backend:latest  # UPDATE: your Docker Hub username
           imagePullPolicy: Always
           ports:
-            - containerPort: 8080
+            - containerPort: 8000
               name: http
               protocol: TCP
           env:
-            - name: APP_ENV
-              value: production
-            - name: APP_DEBUG
-              value: 'false'
-            - name: SITE_OWNER
-              value: 'admin@example.com'
-            - name: APP_KEY
+            - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
                   name: firefly-secret
-                  key: APP_KEY
-            - name: DEFAULT_LANGUAGE
-              value: 'en_US'
-            - name: DEFAULT_LOCALE
-              value: 'equal'
-            - name: TZ
-              value: 'UTC'
-            - name: TRUSTED_PROXIES
-              value: '**'
-            - name: APP_URL
+                  key: DATABASE_URL
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: firefly-secret
+                  key: SECRET_KEY
+            - name: GITHUB_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: firefly-secret
+                  key: GITHUB_CLIENT_ID
+            - name: GITHUB_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: firefly-secret
+                  key: GITHUB_CLIENT_SECRET
+            - name: FRONTEND_URL
               value: 'http://firefly.k8s.home'
-            - name: DB_CONNECTION
-              value: mysql
-            - name: DB_HOST
-              value: mariadb.firefly.svc.cluster.local
-            - name: DB_PORT
-              value: '3306'
-            - name: DB_DATABASE
-              valueFrom:
-                secretKeyRef:
-                  name: mariadb-secret
-                  key: MYSQL_DATABASE
-            - name: DB_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: mariadb-secret
-                  key: MYSQL_USER
-            - name: DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: firefly-secret
-                  key: DB_PASSWORD
-            - name: CACHE_DRIVER
-              value: file
-            - name: SESSION_DRIVER
-              value: file
-            - name: LOG_CHANNEL
-              value: stack
-            - name: APP_LOG_LEVEL
-              value: notice
           resources:
             requests:
-              memory: '256Mi'
-              cpu: '100m'
+              memory: '128Mi'
+              cpu: '50m'
             limits:
-              memory: '512Mi'
-              cpu: '500m'
+              memory: '256Mi'
+              cpu: '250m'
           livenessProbe:
             httpGet:
               path: /health
-              port: 8080
-            initialDelaySeconds: 60
+              port: 8000
+            initialDelaySeconds: 30
             periodSeconds: 30
             timeoutSeconds: 10
             failureThreshold: 3
           readinessProbe:
             httpGet:
               path: /health
-              port: 8080
-            initialDelaySeconds: 30
+              port: 8000
+            initialDelaySeconds: 10
             periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 3
-          volumeMounts:
-            - name: firefly-upload
-              mountPath: /var/www/html/storage/upload
-      volumes:
-        - name: firefly-upload
-          persistentVolumeClaim:
-            claimName: firefly-upload-pvc
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: firefly
+  name: firefly-backend
   namespace: firefly
+  labels:
+    app: firefly-backend
 spec:
   type: ClusterIP
   selector:
-    app: firefly
+    app: firefly-backend
   ports:
     - name: http
-      port: 8080
-      targetPort: 8080
+      port: 8000
+      targetPort: 8000
+      protocol: TCP
+---
+# Firefly Error Tracker - Frontend Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: firefly-frontend
+  namespace: firefly
+  labels:
+    app: firefly-frontend
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: firefly-frontend
+  template:
+    metadata:
+      labels:
+        app: firefly-frontend
+    spec:
+      serviceAccountName: firefly
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: frontend
+          image: yourusername/firefly-frontend:latest  # UPDATE: your Docker Hub username
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+              name: http
+              protocol: TCP
+          env:
+            - name: NUXT_PUBLIC_API_BASE
+              value: 'http://firefly-backend.firefly.svc.cluster.local:8000'
+          resources:
+            requests:
+              memory: '128Mi'
+              cpu: '50m'
+            limits:
+              memory: '256Mi'
+              cpu: '250m'
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: firefly-frontend
+  namespace: firefly
+  labels:
+    app: firefly-frontend
+spec:
+  type: ClusterIP
+  selector:
+    app: firefly-frontend
+  ports:
+    - name: http
+      port: 3000
+      targetPort: 3000
       protocol: TCP

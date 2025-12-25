@@ -10,10 +10,51 @@ spec:
   hostnames:
     - firefly.k8s.home
   rules:
+    # Route /api/* to backend
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /api
+      backendRefs:
+        - name: firefly-backend
+          port: 8000
+    # Route /health to backend
+    - matches:
+        - path:
+            type: Exact
+            value: /health
+      backendRefs:
+        - name: firefly-backend
+          port: 8000
+    # Route /auth/* to backend (for GitHub OAuth)
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /auth
+      backendRefs:
+        - name: firefly-backend
+          port: 8000
+    # Route /errors/* to backend
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /errors
+      backendRefs:
+        - name: firefly-backend
+          port: 8000
+    # Route /users/* to backend
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /users
+      backendRefs:
+        - name: firefly-backend
+          port: 8000
+    # Route everything else to frontend
     - matches:
         - path:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: firefly
-          port: 8080
+        - name: firefly-frontend
+          port: 3000

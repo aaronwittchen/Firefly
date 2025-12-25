@@ -6,8 +6,8 @@ namespace: firefly
 resources:
   - namespace.yaml
   - service-accounts.yaml
-  - mariadb-config.yaml
-  - mariadb.yaml
+  - postgres-config.yaml
+  - postgres.yaml
   - pvcs.yaml
   - deployment.yaml
   - httproute.yaml
