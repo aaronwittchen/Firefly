@@ -30,7 +30,7 @@ spec:
             - -c
             - |
               echo "Waiting for MariaDB..."
-              until nc -z mariadb 3306; do
+              until nc -z mariadb.firefly.svc.cluster.local 3306; do
                 echo "MariaDB not ready, waiting..."
                 sleep 2
               done
@@ -75,7 +75,7 @@ spec:
             - name: DB_CONNECTION
               value: mysql
             - name: DB_HOST
-              value: mariadb
+              value: mariadb.firefly.svc.cluster.local
             - name: DB_PORT
               value: '3306'
             - name: DB_DATABASE
