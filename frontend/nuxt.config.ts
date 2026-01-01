@@ -14,8 +14,19 @@ export default defineNuxtConfig({
     "@vueuse/nuxt",
     "@nuxt/icon",
     "@nuxt/image",
+    "@nuxt/fonts",
     "@nuxt/test-utils/module",
   ],
+
+  fonts: {
+    families: [
+      {
+        name: "Noto Sans",
+        provider: "google",
+        weights: [400, 500, 600, 700],
+      },
+    ],
+  },
 
   css: ["~/assets/css/main.css"],
 

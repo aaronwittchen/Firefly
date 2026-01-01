@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const errorLogSchema = z.object({
   id: z.number(),
+  user_id: z.number(),
   message: z.string(),
   error_type: z.string().nullable(),
   project: z.string().nullable(),

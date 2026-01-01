@@ -9,6 +9,7 @@ datasource db {
 
 model ErrorLog {
   id           Int      @id @default(autoincrement())
+  userId       Int      @map("user_id")
   message      String
   errorType    String?  @map("error_type") @db.VarChar(100)
   project      String?  @db.VarChar(255)
@@ -24,6 +25,9 @@ model ErrorLog {
   createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
   updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz
 
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
   @@index([project])
   @@index([errorType])
   @@index([language])
@@ -32,15 +36,17 @@ model ErrorLog {
 }
 
 model User {
-  id             Int       @id @default(autoincrement())
-  githubId       Int       @unique @map("github_id")
-  githubUsername String    @unique @map("github_username")
-  email          String?   @unique
+  id             Int        @id @default(autoincrement())
+  githubId       Int        @unique @map("github_id")
+  githubUsername String     @unique @map("github_username")
+  email          String?    @unique
   name           String?
-  avatarUrl      String?   @map("avatar_url")
-  accessToken    String    @map("access_token")
-  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt      DateTime? @updatedAt @map("updated_at") @db.Timestamptz
+  avatarUrl      String?    @map("avatar_url")
+  accessToken    String     @map("access_token")
+  createdAt      DateTime   @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime?  @updatedAt @map("updated_at") @db.Timestamptz
+
+  errors ErrorLog[]
 
   @@map("users")
 }

@@ -3,6 +3,7 @@ import type { ErrorFilters, ErrorLog, ErrorLogCreate, ErrorLogUpdate } from "~/t
 export const useErrorsStore = defineStore("errors", () => {
   const config = useRuntimeConfig();
   const apiBase = config.public.apiBase;
+  const authStore = useAuthStore();
 
   const errors = ref<ErrorLog[]>([]);
   const currentError = ref<ErrorLog | null>(null);
@@ -24,7 +25,9 @@ export const useErrorsStore = defineStore("errors", () => {
       const queryString = params.toString();
       const url = `${apiBase}/errors/${queryString ? `?${queryString}` : ""}`;
 
-      const response = await fetch(url);
+      const response = await fetch(url, {
+        headers: authStore.getAuthHeaders(),
+      });
       if (!response.ok) {
         throw new Error(`Failed to fetch errors: ${response.statusText}`);
       }
@@ -43,7 +46,9 @@ export const useErrorsStore = defineStore("errors", () => {
     error.value = null;
 
     try {
-      const response = await fetch(`${apiBase}/errors/${id}`);
+      const response = await fetch(`${apiBase}/errors/${id}`, {
+        headers: authStore.getAuthHeaders(),
+      });
       if (!response.ok) {
         throw new Error(`Failed to fetch error: ${response.statusText}`);
       }
@@ -65,7 +70,10 @@ export const useErrorsStore = defineStore("errors", () => {
     try {
       const response = await fetch(`${apiBase}/errors/`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...authStore.getAuthHeaders(),
+        },
         body: JSON.stringify(data),
       });
 
@@ -91,7 +99,10 @@ export const useErrorsStore = defineStore("errors", () => {
     try {
       const response = await fetch(`${apiBase}/errors/${id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...authStore.getAuthHeaders(),
+        },
         body: JSON.stringify(data),
       });
 
@@ -123,6 +134,7 @@ export const useErrorsStore = defineStore("errors", () => {
     try {
       const response = await fetch(`${apiBase}/errors/${id}`, {
         method: "DELETE",
+        headers: authStore.getAuthHeaders(),
       });
 
       if (!response.ok) {

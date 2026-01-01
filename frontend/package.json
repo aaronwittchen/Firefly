@@ -14,15 +14,19 @@
     "typecheck": "nuxt typecheck",
     "test": "vitest",
     "test:run": "vitest run",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
     "prepare": "husky",
     "knip": "knip",
     "syncpack:list": "syncpack list-mismatches",
     "syncpack:fix": "syncpack fix-mismatches",
     "taze": "taze",
     "taze:major": "taze major",
-    "spell": "cspell \"**/*.{ts,vue,md}\""
+    "spell": "cspell \"**/*.{ts,vue,md}\"",
+    "audit": "bun pm ls --all | grep -E \"^[├└]\" || echo 'Run: bun audit (when available)'"
   },
   "dependencies": {
+    "@nuxt/fonts": "^0.12.1",
     "@pinia/nuxt": "^0.9.0",
     "@vueuse/core": "^12.4.0",
     "@vueuse/nuxt": "^12.4.0",
@@ -41,6 +45,7 @@
     "@nuxt/icon": "^1.12.0",
     "@nuxt/image": "^1.10.0",
     "@nuxt/test-utils": "^3.21.0",
+    "@playwright/test": "^1.49.1",
     "@tailwindcss/vite": "^4.1.4",
     "@types/node": "^22.15.3",
     "@vue/test-utils": "^2.4.6",

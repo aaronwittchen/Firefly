@@ -24,8 +24,8 @@ const { formatDateTime } = useDayjs();
       >
         <div v-if="error" class="space-y-4">
           <div class="flex items-start justify-between">
-            <DialogTitle class="text-lg font-semibold text-gray-900 dark:text-gray-100">
-              Error #{{ error.id }}
+            <DialogTitle class="max-w-md truncate text-lg font-semibold text-gray-900 dark:text-gray-100">
+              {{ error.message }}
             </DialogTitle>
             <span
               :class="[

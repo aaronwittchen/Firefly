@@ -6,10 +6,34 @@
     "dev:backend": "cd backend && python main.py",
     "dev:frontend": "cd frontend && bun run dev",
     "build": "cd frontend && bun run build",
-    "install:all": "cd frontend && bun install",
-    "lint": "cd frontend && bun run lint",
-    "typecheck": "cd frontend && bun run typecheck",
-    "test": "cd frontend && bun run test"
+    "install:all": "cd frontend && bun install && cd ../backend && pip install -r requirements.txt -r requirements-dev.txt",
+
+    "lint": "bun run lint:frontend && bun run lint:backend",
+    "lint:frontend": "cd frontend && bun run lint",
+    "lint:backend": "cd backend && ruff check .",
+    "lint:fix": "bun run lint:fix:frontend && bun run lint:fix:backend",
+    "lint:fix:frontend": "cd frontend && bun run lint:fix",
+    "lint:fix:backend": "cd backend && ruff check --fix . && ruff format .",
+
+    "typecheck": "bun run typecheck:frontend && bun run typecheck:backend",
+    "typecheck:frontend": "cd frontend && bun run typecheck",
+    "typecheck:backend": "cd backend && mypy .",
+
+    "test": "bun run test:frontend && bun run test:backend",
+    "test:frontend": "cd frontend && bun run test:run",
+    "test:backend": "cd backend && pytest",
+    "test:e2e": "cd frontend && bun run test:e2e",
+
+    "security": "bun run security:frontend && bun run security:backend",
+    "security:frontend": "cd frontend && bun x npm-audit || true",
+    "security:backend": "cd backend && pip-audit && bandit -r . -x tests,venv,.venv",
+
+    "check": "bun run lint && bun run typecheck && bun run test",
+    "check:all": "bun run check && bun run security",
+
+    "knip": "cd frontend && bun run knip",
+    "spell": "cd frontend && bun run spell",
+    "taze": "cd frontend && bun run taze"
   },
   "devDependencies": {
     "concurrently": "^9.1.2"

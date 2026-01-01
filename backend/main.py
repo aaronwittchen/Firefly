@@ -61,37 +61,35 @@ async def login(request: Request) -> RedirectResponse:
     return await oauth.github.authorize_redirect(request, redirect_uri)
 
 
-@app.get("/auth/callback", response_model=TokenResponse)
-async def auth_callback(request: Request, db: Session = Depends(get_db)) -> dict:
+@app.get("/auth/callback")
+async def auth_callback(request: Request, db: Session = Depends(get_db)) -> RedirectResponse:
     try:
         token = await oauth.github.authorize_access_token(request)
+
+        access_token = token.get("access_token")
+        if not access_token:
+            return RedirectResponse(url=f"{FRONTEND_URL}/auth/callback?error=Failed to get access token")
+
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                "https://api.github.com/user",
+                headers={"Authorization": f"Bearer {access_token}"},
+            )
+            github_data = response.json()
+
+        github_id = github_data.get("id")
+        if not github_id:
+            return RedirectResponse(url=f"{FRONTEND_URL}/auth/callback?error=Failed to get GitHub user data")
+
+        user = get_or_create_user(db, github_id, github_data, access_token)
+
+        jwt_token = create_access_token(data={"sub": str(user.id)})
+
+        return RedirectResponse(url=f"{FRONTEND_URL}/auth/callback?token={jwt_token}")
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Authentication failed: {str(e)}")
-
-    access_token = token.get("access_token")
-    if not access_token:
-        raise HTTPException(status_code=400, detail="Failed to get access token")
-
-    async with httpx.AsyncClient() as client:
-        response = await client.get(
-            "https://api.github.com/user",
-            headers={"Authorization": f"Bearer {access_token}"},
-        )
-        github_data = response.json()
-
-    github_id = github_data.get("id")
-    if not github_id:
-        raise HTTPException(status_code=400, detail="Failed to get GitHub user data")
-
-    user = get_or_create_user(db, github_id, github_data, access_token)
-
-    jwt_token = create_access_token(data={"sub": user.id})
-
-    return {
-        "access_token": jwt_token,
-        "token_type": "bearer",
-        "user": user,
-    }
+        import traceback
+        traceback.print_exc()
+        return RedirectResponse(url=f"{FRONTEND_URL}/auth/callback?error={str(e)}")
 
 
 @app.get("/auth/me", response_model=UserResponse)
@@ -133,8 +131,9 @@ def get_errors(
     language: Optional[str] = Query(None, description="Filter by language"),
     error_type: Optional[str] = Query(None, description="Filter by error type"),
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ) -> List[ErrorLog]:
-    query = db.query(ErrorLog)
+    query = db.query(ErrorLog).filter(ErrorLog.user_id == current_user.id)
 
     if project:
         query = query.filter(ErrorLog.project == project)
@@ -154,8 +153,12 @@ def get_errors(
 def get_error(
     error_id: int,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ) -> ErrorLog:
-    error = db.query(ErrorLog).filter(ErrorLog.id == error_id).first()
+    error = db.query(ErrorLog).filter(
+        ErrorLog.id == error_id,
+        ErrorLog.user_id == current_user.id,
+    ).first()
     if error is None:
         raise HTTPException(status_code=404, detail="Error not found")
     return error
@@ -165,8 +168,9 @@ def get_error(
 def create_error(
     error: ErrorLogCreate,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ) -> ErrorLog:
-    db_error = ErrorLog(**error.model_dump())
+    db_error = ErrorLog(**error.model_dump(), user_id=current_user.id)
     db.add(db_error)
     db.commit()
     db.refresh(db_error)
@@ -178,8 +182,12 @@ def update_error(
     error_id: int,
     error: ErrorLogUpdate,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ) -> ErrorLog:
-    db_error = db.query(ErrorLog).filter(ErrorLog.id == error_id).first()
+    db_error = db.query(ErrorLog).filter(
+        ErrorLog.id == error_id,
+        ErrorLog.user_id == current_user.id,
+    ).first()
     if db_error is None:
         raise HTTPException(status_code=404, detail="Error not found")
 
@@ -196,8 +204,12 @@ def update_error(
 def delete_error(
     error_id: int,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ) -> None:
-    db_error = db.query(ErrorLog).filter(ErrorLog.id == error_id).first()
+    db_error = db.query(ErrorLog).filter(
+        ErrorLog.id == error_id,
+        ErrorLog.user_id == current_user.id,
+    ).first()
     if db_error is None:
         raise HTTPException(status_code=404, detail="Error not found")
 

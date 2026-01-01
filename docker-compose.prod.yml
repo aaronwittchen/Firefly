@@ -1,0 +1,64 @@
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:16-alpine
+    container_name: firefly-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Python FastAPI Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: firefly-backend
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
+      SECRET_KEY: ${SECRET_KEY}
+      FRONTEND_URL: ${FRONTEND_URL}
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # Nuxt 3 Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: firefly-frontend
+    restart: unless-stopped
+    environment:
+      NUXT_PUBLIC_API_BASE: ${API_BASE_URL}
+      NODE_ENV: production
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+  # Typesense Search Engine
+  # typesense:
+  #   image: typesense/typesense:27.1
+  #   container_name: firefly-typesense
+  #   restart: unless-stopped
+  #   environment:
+  #     TYPESENSE_API_KEY: ${TYPESENSE_API_KEY}
+  #     TYPESENSE_DATA_DIR: /data
+  #   volumes:
+  #     - typesense_data:/data
+
+volumes:
+  postgres_data:
+  # typesense_data:

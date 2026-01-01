@@ -40,6 +40,7 @@ class ErrorLogUpdate(BaseModel):
 
 class ErrorLogResponse(ErrorLogBase):
     id: int
+    user_id: int
     created_at: datetime
     updated_at: Optional[datetime] = None
 

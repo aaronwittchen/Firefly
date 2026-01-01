@@ -1,5 +1,6 @@
-from sqlalchemy import Boolean, Column, DateTime, Integer, String, Text
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.dialects.postgresql import ARRAY
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
 from database import Base
@@ -9,6 +10,7 @@ class ErrorLog(Base):
     __tablename__ = "error_logs"
 
     id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
     message = Column(Text, nullable=False)
     error_type = Column(String(100), nullable=True, index=True)
     project = Column(String(255), nullable=True, index=True)
@@ -24,6 +26,8 @@ class ErrorLog(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
+    user = relationship("User", back_populates="errors")
+
 
 class User(Base):
     __tablename__ = "users"
@@ -37,3 +41,5 @@ class User(Base):
     access_token = Column(Text, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
+    errors = relationship("ErrorLog", back_populates="user")
