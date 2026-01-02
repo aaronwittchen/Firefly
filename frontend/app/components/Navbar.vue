@@ -1,5 +1,11 @@
 <script setup lang="ts">
-import { DropdownMenuContent, DropdownMenuItem, DropdownMenuPortal, DropdownMenuRoot, DropdownMenuTrigger } from "reka-ui";
+import {
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuPortal,
+  DropdownMenuRoot,
+  DropdownMenuTrigger,
+} from "reka-ui";
 
 const route = useRoute();
 const authStore = useAuthStore();
@@ -13,11 +19,16 @@ const navLinks = [
 </script>
 
 <template>
-  <nav class="border-b border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
+  <nav
+    class="border-b border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800"
+  >
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="flex h-16 items-center justify-between">
         <div class="flex items-center gap-8">
-          <NuxtLink to="/" class="text-xl font-bold text-gray-900 dark:text-white">
+          <NuxtLink
+            to="/"
+            class="text-xl font-bold text-gray-900 dark:text-white"
+          >
             Firefly
           </NuxtLink>
           <div class="flex items-center gap-1">
@@ -68,7 +79,9 @@ const navLinks = [
                 :side-offset="8"
                 class="z-50 min-w-48 rounded-lg border border-gray-200 bg-white p-1 shadow-lg dark:border-gray-700 dark:bg-gray-800"
               >
-                <div class="border-b border-gray-200 px-3 py-2 dark:border-gray-700">
+                <div
+                  class="border-b border-gray-200 px-3 py-2 dark:border-gray-700"
+                >
                   <p class="text-sm font-medium text-gray-900 dark:text-white">
                     {{ user?.name || user?.github_username }}
                   </p>

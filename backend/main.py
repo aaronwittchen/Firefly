@@ -1,12 +1,11 @@
 import os
-from typing import List, Optional
 
 import httpx
 from fastapi import Depends, FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
-from starlette.middleware.sessions import SessionMiddleware
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
+from starlette.middleware.sessions import SessionMiddleware
 
 from auth import create_access_token, get_current_user, get_or_create_user, oauth
 from database import Base, engine, get_db
@@ -16,7 +15,6 @@ from schemas import (
     ErrorLogCreate,
     ErrorLogResponse,
     ErrorLogUpdate,
-    TokenResponse,
     UserResponse,
 )
 
@@ -89,7 +87,7 @@ async def auth_callback(request: Request, db: Session = Depends(get_db)) -> Redi
     except Exception as e:
         import traceback
         traceback.print_exc()
-        return RedirectResponse(url=f"{FRONTEND_URL}/auth/callback?error={str(e)}")
+        return RedirectResponse(url=f"{FRONTEND_URL}/auth/callback?error={e!s}")
 
 
 @app.get("/auth/me", response_model=UserResponse)
@@ -97,13 +95,13 @@ async def get_me(current_user: User = Depends(get_current_user)) -> User:
     return current_user
 
 
-@app.get("/users/", response_model=List[UserResponse])
+@app.get("/users/", response_model=list[UserResponse])
 def get_users(
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
-) -> List[User]:
+) -> list[User]:
     users = db.query(User).offset(skip).limit(limit).all()
     return users
 
@@ -121,18 +119,18 @@ def get_user(
 
 
 # Error CRUD endpoints
-@app.get("/errors/", response_model=List[ErrorLogResponse])
+@app.get("/errors/", response_model=list[ErrorLogResponse])
 def get_errors(
     skip: int = 0,
     limit: int = 100,
-    project: Optional[str] = Query(None, description="Filter by project"),
-    tag: Optional[str] = Query(None, description="Filter by tag"),
-    resolved: Optional[bool] = Query(None, description="Filter by resolved status"),
-    language: Optional[str] = Query(None, description="Filter by language"),
-    error_type: Optional[str] = Query(None, description="Filter by error type"),
+    project: str | None = Query(None, description="Filter by project"),
+    tag: str | None = Query(None, description="Filter by tag"),
+    resolved: bool | None = Query(None, description="Filter by resolved status"),
+    language: str | None = Query(None, description="Filter by language"),
+    error_type: str | None = Query(None, description="Filter by error type"),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
-) -> List[ErrorLog]:
+) -> list[ErrorLog]:
     query = db.query(ErrorLog).filter(ErrorLog.user_id == current_user.id)
 
     if project:

@@ -1,21 +1,20 @@
 from datetime import datetime
-from typing import Optional
 
 from pydantic import BaseModel
 
 
 class ErrorLogBase(BaseModel):
     message: str
-    error_type: Optional[str] = None
-    project: Optional[str] = None
-    git_branch: Optional[str] = None
-    git_commit: Optional[str] = None
-    os: Optional[str] = None
-    language: Optional[str] = None
-    tags: Optional[list[str]] = None
-    solution: Optional[str] = None
-    notes: Optional[str] = None
-    time_to_fix_min: Optional[int] = None
+    error_type: str | None = None
+    project: str | None = None
+    git_branch: str | None = None
+    git_commit: str | None = None
+    os: str | None = None
+    language: str | None = None
+    tags: list[str] | None = None
+    solution: str | None = None
+    notes: str | None = None
+    time_to_fix_min: int | None = None
     resolved: bool = False
 
 
@@ -24,25 +23,25 @@ class ErrorLogCreate(ErrorLogBase):
 
 
 class ErrorLogUpdate(BaseModel):
-    message: Optional[str] = None
-    error_type: Optional[str] = None
-    project: Optional[str] = None
-    git_branch: Optional[str] = None
-    git_commit: Optional[str] = None
-    os: Optional[str] = None
-    language: Optional[str] = None
-    tags: Optional[list[str]] = None
-    solution: Optional[str] = None
-    notes: Optional[str] = None
-    time_to_fix_min: Optional[int] = None
-    resolved: Optional[bool] = None
+    message: str | None = None
+    error_type: str | None = None
+    project: str | None = None
+    git_branch: str | None = None
+    git_commit: str | None = None
+    os: str | None = None
+    language: str | None = None
+    tags: list[str] | None = None
+    solution: str | None = None
+    notes: str | None = None
+    time_to_fix_min: int | None = None
+    resolved: bool | None = None
 
 
 class ErrorLogResponse(ErrorLogBase):
     id: int
     user_id: int
     created_at: datetime
-    updated_at: Optional[datetime] = None
+    updated_at: datetime | None = None
 
     class Config:
         from_attributes = True
@@ -52,11 +51,11 @@ class UserResponse(BaseModel):
     id: int
     github_id: int
     github_username: str
-    email: Optional[str] = None
-    name: Optional[str] = None
-    avatar_url: Optional[str] = None
+    email: str | None = None
+    name: str | None = None
+    avatar_url: str | None = None
     created_at: datetime
-    updated_at: Optional[datetime] = None
+    updated_at: datetime | None = None
 
     class Config:
         from_attributes = True

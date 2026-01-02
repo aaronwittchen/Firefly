@@ -19,12 +19,5 @@
     "timestamptz",
     "firefly"
   ],
-  "ignorePaths": [
-    "node_modules",
-    ".nuxt",
-    ".output",
-    "dist",
-    "bun.lock",
-    "*.min.js"
-  ]
+  "ignorePaths": ["node_modules", ".nuxt", ".output", "dist", "bun.lock", "*.min.js"]
 }

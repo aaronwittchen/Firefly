@@ -1,8 +1,9 @@
+import os
+from urllib.parse import urlparse, urlunparse
+
+from dotenv import load_dotenv
 from sqlalchemy import create_engine, text
 from sqlalchemy.exc import OperationalError, ProgrammingError
-import os
-from dotenv import load_dotenv
-from urllib.parse import urlparse, urlunparse
 
 load_dotenv()
 

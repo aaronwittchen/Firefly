@@ -1,6 +1,5 @@
 import os
 from datetime import datetime, timedelta
-from typing import Optional
 
 from authlib.integrations.starlette_client import OAuth
 from fastapi import Depends, HTTPException, status
@@ -38,7 +37,7 @@ oauth.register(
 security = HTTPBearer()
 
 
-def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
+def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.utcnow() + expires_delta

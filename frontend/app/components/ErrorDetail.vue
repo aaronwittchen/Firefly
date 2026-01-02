@@ -1,5 +1,12 @@
 <script setup lang="ts">
-import { DialogClose, DialogContent, DialogOverlay, DialogPortal, DialogRoot, DialogTitle } from "reka-ui";
+import {
+  DialogClose,
+  DialogContent,
+  DialogOverlay,
+  DialogPortal,
+  DialogRoot,
+  DialogTitle,
+} from "reka-ui";
 import type { ErrorLog } from "~/types/error";
 
 defineProps<{
@@ -24,7 +31,9 @@ const { formatDateTime } = useDayjs();
       >
         <div v-if="error" class="space-y-4">
           <div class="flex items-start justify-between">
-            <DialogTitle class="max-w-md truncate text-lg font-semibold text-gray-900 dark:text-gray-100">
+            <DialogTitle
+              class="max-w-md truncate text-lg font-semibold text-gray-900 dark:text-gray-100"
+            >
               {{ error.message }}
             </DialogTitle>
             <span
@@ -35,50 +44,84 @@ const { formatDateTime } = useDayjs();
                   : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
               ]"
             >
-              {{ error.resolved ? "Resolved" : "Open" }}
+              {{ error.resolved ? 'Resolved' : 'Open' }}
             </span>
           </div>
 
           <div class="rounded-md bg-gray-50 p-4 dark:bg-gray-900">
-            <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">Message</h4>
-            <p class="mt-1 whitespace-pre-wrap text-sm text-gray-900 dark:text-gray-100">{{ error.message }}</p>
+            <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">
+              Message
+            </h4>
+            <p
+              class="mt-1 whitespace-pre-wrap text-sm text-gray-900 dark:text-gray-100"
+            >
+              {{ error.message }}
+            </p>
           </div>
 
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">Project</h4>
-              <p class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ error.project || "-" }}</p>
+              <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                Project
+              </h4>
+              <p class="mt-1 text-sm text-gray-900 dark:text-gray-100">
+                {{ error.project || '-' }}
+              </p>
             </div>
             <div>
-              <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">Error Type</h4>
-              <p class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ error.error_type || "-" }}</p>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-2 gap-4">
-            <div>
-              <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">Language</h4>
-              <p class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ error.language || "-" }}</p>
-            </div>
-            <div>
-              <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">OS</h4>
-              <p class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ error.os || "-" }}</p>
+              <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                Error Type
+              </h4>
+              <p class="mt-1 text-sm text-gray-900 dark:text-gray-100">
+                {{ error.error_type || '-' }}
+              </p>
             </div>
           </div>
 
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">Git Branch</h4>
-              <p class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ error.git_branch || "-" }}</p>
+              <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                Language
+              </h4>
+              <p class="mt-1 text-sm text-gray-900 dark:text-gray-100">
+                {{ error.language || '-' }}
+              </p>
             </div>
             <div>
-              <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">Git Commit</h4>
-              <p class="mt-1 font-mono text-sm text-gray-900 dark:text-gray-100">{{ error.git_commit || "-" }}</p>
+              <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                OS
+              </h4>
+              <p class="mt-1 text-sm text-gray-900 dark:text-gray-100">
+                {{ error.os || '-' }}
+              </p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                Git Branch
+              </h4>
+              <p class="mt-1 text-sm text-gray-900 dark:text-gray-100">
+                {{ error.git_branch || '-' }}
+              </p>
+            </div>
+            <div>
+              <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                Git Commit
+              </h4>
+              <p
+                class="mt-1 font-mono text-sm text-gray-900 dark:text-gray-100"
+              >
+                {{ error.git_commit || '-' }}
+              </p>
             </div>
           </div>
 
           <div v-if="error.tags && error.tags.length > 0">
-            <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">Tags</h4>
+            <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">
+              Tags
+            </h4>
             <div class="mt-1 flex flex-wrap gap-1">
               <span
                 v-for="tag in error.tags"
@@ -91,29 +134,55 @@ const { formatDateTime } = useDayjs();
           </div>
 
           <div v-if="error.solution">
-            <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">Solution</h4>
-            <p class="mt-1 whitespace-pre-wrap text-sm text-gray-900 dark:text-gray-100">{{ error.solution }}</p>
+            <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">
+              Solution
+            </h4>
+            <p
+              class="mt-1 whitespace-pre-wrap text-sm text-gray-900 dark:text-gray-100"
+            >
+              {{ error.solution }}
+            </p>
           </div>
 
           <div v-if="error.notes">
-            <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">Notes</h4>
-            <p class="mt-1 whitespace-pre-wrap text-sm text-gray-900 dark:text-gray-100">{{ error.notes }}</p>
+            <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">
+              Notes
+            </h4>
+            <p
+              class="mt-1 whitespace-pre-wrap text-sm text-gray-900 dark:text-gray-100"
+            >
+              {{ error.notes }}
+            </p>
           </div>
 
-          <div class="grid grid-cols-3 gap-4 border-t border-gray-200 pt-4 dark:border-gray-700">
+          <div
+            class="grid grid-cols-3 gap-4 border-t border-gray-200 pt-4 dark:border-gray-700"
+          >
             <div>
-              <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">Time to Fix</h4>
+              <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                Time to Fix
+              </h4>
               <p class="mt-1 text-sm text-gray-900 dark:text-gray-100">
-                {{ error.time_to_fix_min ? `${error.time_to_fix_min} min` : "-" }}
+                {{
+                  error.time_to_fix_min ? `${error.time_to_fix_min} min` : '-'
+                }}
               </p>
             </div>
             <div>
-              <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">Created</h4>
-              <p class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ formatDateTime(error.created_at) }}</p>
+              <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                Created
+              </h4>
+              <p class="mt-1 text-sm text-gray-900 dark:text-gray-100">
+                {{ formatDateTime(error.created_at) }}
+              </p>
             </div>
             <div>
-              <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">Updated</h4>
-              <p class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ formatDateTime(error.updated_at) }}</p>
+              <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                Updated
+              </h4>
+              <p class="mt-1 text-sm text-gray-900 dark:text-gray-100">
+                {{ formatDateTime(error.updated_at) }}
+              </p>
             </div>
           </div>
 

@@ -1,12 +1,16 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.3.10/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
     "useIgnoreFile": true
   },
-  "organizeImports": {
-    "enabled": true
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
   },
   "linter": {
     "enabled": true,
@@ -43,14 +47,20 @@
     }
   },
   "files": {
-    "ignore": [
-      "node_modules",
-      ".nuxt",
-      ".output",
-      "dist",
-      ".git",
-      "*.min.js",
-      "bun.lock"
+    "includes": [
+      "**/*.ts",
+      "**/*.tsx",
+      "**/*.js",
+      "**/*.jsx",
+      "**/*.vue",
+      "**/*.json",
+      "!**/node_modules",
+      "!**/.nuxt",
+      "!**/.output",
+      "!**/dist",
+      "!**/.git",
+      "!**/*.min.js",
+      "!**/bun.lock"
     ]
   }
 }

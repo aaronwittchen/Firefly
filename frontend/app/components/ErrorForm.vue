@@ -1,5 +1,12 @@
 <script setup lang="ts">
-import { DialogClose, DialogContent, DialogOverlay, DialogPortal, DialogRoot, DialogTitle } from "reka-ui";
+import {
+  DialogClose,
+  DialogContent,
+  DialogOverlay,
+  DialogPortal,
+  DialogRoot,
+  DialogTitle,
+} from "reka-ui";
 import type { ErrorLog, ErrorLogCreate } from "~/types/error";
 import { errorLogCreateSchema } from "~/types/error";
 
@@ -106,7 +113,8 @@ function handleClose() {
   resetForm();
 }
 
-const inputClass = "mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100";
+const inputClass =
+  "mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100";
 const labelClass = "block text-sm font-medium text-gray-700 dark:text-gray-300";
 </script>
 
@@ -117,8 +125,10 @@ const labelClass = "block text-sm font-medium text-gray-700 dark:text-gray-300";
       <DialogContent
         class="fixed left-1/2 top-1/2 z-50 max-h-[85vh] w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-lg bg-white p-6 shadow-xl dark:bg-gray-800"
       >
-        <DialogTitle class="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
-          {{ isEditing ? "Edit Error" : "New Error" }}
+        <DialogTitle
+          class="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100"
+        >
+          {{ isEditing ? 'Edit Error' : 'New Error' }}
         </DialogTitle>
 
         <form class="space-y-4" @submit.prevent="handleSubmit">
@@ -133,7 +143,10 @@ const labelClass = "block text-sm font-medium text-gray-700 dark:text-gray-300";
               :class="inputClass"
               placeholder="Error message..."
             />
-            <p v-if="validationErrors.message" class="mt-1 text-sm text-red-600 dark:text-red-400">
+            <p
+              v-if="validationErrors.message"
+              class="mt-1 text-sm text-red-600 dark:text-red-400"
+            >
               {{ validationErrors.message }}
             </p>
           </div>
@@ -150,9 +163,7 @@ const labelClass = "block text-sm font-medium text-gray-700 dark:text-gray-300";
               />
             </div>
             <div>
-              <label for="error_type" :class="labelClass">
-                Error Type
-              </label>
+              <label for="error_type" :class="labelClass"> Error Type </label>
               <input
                 id="error_type"
                 v-model="form.error_type"
@@ -188,9 +199,7 @@ const labelClass = "block text-sm font-medium text-gray-700 dark:text-gray-300";
 
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <label for="git_branch" :class="labelClass">
-                Git Branch
-              </label>
+              <label for="git_branch" :class="labelClass"> Git Branch </label>
               <input
                 id="git_branch"
                 v-model="form.git_branch"
@@ -200,9 +209,7 @@ const labelClass = "block text-sm font-medium text-gray-700 dark:text-gray-300";
               />
             </div>
             <div>
-              <label for="git_commit" :class="labelClass">
-                Git Commit
-              </label>
+              <label for="git_commit" :class="labelClass"> Git Commit </label>
               <input
                 id="git_commit"
                 v-model="form.git_commit"
@@ -223,7 +230,9 @@ const labelClass = "block text-sm font-medium text-gray-700 dark:text-gray-300";
               type="text"
               :class="inputClass"
               placeholder="frontend, api, database..."
-              @input="handleTagsChange(($event.target as HTMLInputElement).value)"
+              @input="
+                handleTagsChange(($event.target as HTMLInputElement).value)
+              "
             />
           </div>
 
@@ -270,7 +279,11 @@ const labelClass = "block text-sm font-medium text-gray-700 dark:text-gray-300";
                 type="checkbox"
                 class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700"
               />
-              <label for="resolved" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">Resolved</label>
+              <label
+                for="resolved"
+                class="ml-2 block text-sm text-gray-700 dark:text-gray-300"
+                >Resolved</label
+              >
             </div>
           </div>
 
@@ -285,7 +298,7 @@ const labelClass = "block text-sm font-medium text-gray-700 dark:text-gray-300";
               type="submit"
               class="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700"
             >
-              {{ isEditing ? "Update" : "Create" }}
+              {{ isEditing ? 'Update' : 'Create' }}
             </button>
           </div>
         </form>
